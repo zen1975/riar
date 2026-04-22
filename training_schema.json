@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Training Case",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "topic",
+    "user_prompt",
+    "assistant_response",
+    "error_type",
+    "red_flags",
+    "mode"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "user_prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assistant_response": {
+      "type": "string",
+      "minLength": 1
+    },
+    "error_type": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "red_flags": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "training_incorrect",
+        "plain_answer"
+      ]
+    }
+  }
+}
