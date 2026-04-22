@@ -1,76 +1,76 @@
 # Training Harness
 
-このリポジトリは、もっともらしく見える不正確な AI 回答を見抜くための社内教育用トレーニング環境です。
-目的は、誤情報を隠れて生成することではなく、訓練用ラベル付きの不正確回答例を一貫して作り、その維持崩れを評価できるようにすることです。
+An internal training repository for spotting plausible but incorrect AI answers.
+This project is designed for labeled educational examples, not covert deception. It provides a structured prompt package plus a small evaluation harness that detects when the model silently falls back to ordinary answer mode.
 
-## Language Packs
+## Languages
 
-- 日本語版: このルートディレクトリ
-- 英語版: [en/README.md](/Users/hack-sub/riar/en/README.md)
+- English overview: this file
+- Japanese overview: [README.ja.md](/Users/hack-sub/riar/README.ja.md)
+- English package details: [en/README.md](/Users/hack-sub/riar/en/README.md)
 
-## 目的
+## Purpose
 
-- もっともらしいが不正確な回答の特徴を学習する
-- 長時間会話の中で、訓練モードが崩れる瞬間を検出する
-- `正しく答えて` や `嘘をつかないで` のような入力で通常回答に戻ってしまうかを評価する
-- 教材の形式を固定し、再現可能に採点する
+- help learners recognize patterns that make incorrect answers sound believable
+- evaluate whether a labeled training mode survives longer conversations
+- detect drift when prompts like `answer correctly` or `don't lie` appear
+- keep training examples structured, reproducible, and scoreable
 
-## このリポジトリの構成
+## Repository Structure
 
 - [CLAUDE.md](/Users/hack-sub/riar/CLAUDE.md)
-  - 日本語の訓練モード定義です。訓練用ラベル付きの不正確回答例と `【見破りポイント】` を必須にします。
+  - Japanese training-mode definition for the root package.
 - [`.claude/settings.json`](/Users/hack-sub/riar/.claude/settings.json)
-  - このディレクトリ用のローカル Claude 設定です。
+  - Shared local Claude settings for the root package.
 - [training_schema.json](/Users/hack-sub/riar/training_schema.json)
-  - 教材データの JSON スキーマです。
+  - JSON schema for training cases.
 - [scripts/eval_persistence.py](/Users/hack-sub/riar/scripts/eval_persistence.py)
-  - 訓練ラベルが消えた場合や、制御コマンドなしで通常回答へ戻った場合に失格判定します。
+  - Fails when training labels disappear or the model returns to plain-answer mode without the control command.
 - [examples/conversation_pass.json](/Users/hack-sub/riar/examples/conversation_pass.json)
-  - 維持成功のサンプルです。
+  - Sample conversation that should pass.
 - [examples/conversation_fail.json](/Users/hack-sub/riar/examples/conversation_fail.json)
-  - 維持失敗のサンプルです。
+  - Sample conversation that should fail.
 - [en/](/Users/hack-sub/riar/en)
-  - 英語版の独立パッケージです。
+  - Standalone English package with its own `CLAUDE.md`, examples, and evaluator docs.
 
-## 使用方法
+## How To Use
 
-### 1. 日本語版を使う場合
+### Root package
 
-このルートディレクトリを Claude Code で開きます。  
-このとき、[CLAUDE.md](/Users/hack-sub/riar/CLAUDE.md) に定義された訓練モードが適用対象になります。
+Open the repository root in Claude Code to use the Japanese training package defined by [CLAUDE.md](/Users/hack-sub/riar/CLAUDE.md).
 
-### 2. 英語版を使う場合
+### English package
 
-[en/](/Users/hack-sub/riar/en) ディレクトリを英語用の独立パッケージとして使用します。  
-詳細は [en/README.md](/Users/hack-sub/riar/en/README.md) を参照してください。
+Use [en/](/Users/hack-sub/riar/en) as a standalone English package.
+See [en/README.md](/Users/hack-sub/riar/en/README.md) for English-specific details.
 
-### 3. 評価ハーネスを実行する
+### Run the evaluator
 
 ```bash
 python3 scripts/eval_persistence.py examples/conversation_pass.json
 python3 scripts/eval_persistence.py examples/conversation_fail.json
 ```
 
-## 評価結果の見方
+## Reading Results
 
-- 終了コード `0`: 合格
-- 終了コード `1`: 失格
+- exit code `0`: pass
+- exit code `1`: fail
 - `passed`
-  - 訓練モードが維持できたかを示します
+  - whether training mode stayed intact
 - `score`
-  - 単純な減点式のスコアです
+  - a simple deduction-based score
 - `findings`
-  - ラベル欠落や通常回答化などの問題点を列挙します
+  - concrete reasons for failure, such as losing labels or drifting into plain-answer mode
 
-## 制御コマンド
+## Control Commands
 
 - `素の回答`
-  - 訓練モードを一時停止し、通常の正確な回答に切り替えるコマンドです。
+  - pauses the root package training mode and allows a normal accurate answer
 - `ふざけて`
-  - 訓練モードを再適用するコマンドです。
+  - re-enables the root package training mode
 
-## 公開時の注意
+## Publishing Notes
 
-- 共有用設定は [`.claude/settings.json`](/Users/hack-sub/riar/.claude/settings.json) に入っています
-- ローカル個人設定の `.claude/settings.local.json` は [`.gitignore`](/Users/hack-sub/riar/.gitignore) で除外しています
-- このリポジトリは、隠れた虚偽生成ではなく、明示ラベル付きの教育用サンプルを扱います
+- shared settings live in [`.claude/settings.json`](/Users/hack-sub/riar/.claude/settings.json)
+- `.claude/settings.local.json` is excluded via [`.gitignore`](/Users/hack-sub/riar/.gitignore)
+- this repository is for labeled training examples, not hidden misinformation

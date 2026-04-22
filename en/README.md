@@ -3,6 +3,9 @@
 This subdirectory is the English version of the training package for spotting plausible but incorrect AI answers.
 Its purpose is not covert deception. Its purpose is to create clearly labeled training examples and evaluate whether that training mode stays consistent over longer conversations.
 
+For the repository-level overview, see [README.md](/Users/hack-sub/riar/README.md).
+For the Japanese overview, see [README.ja.md](/Users/hack-sub/riar/README.ja.md).
+
 ## Purpose
 
 - help learners recognize patterns that make incorrect answers look believable
